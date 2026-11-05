@@ -33,52 +33,6 @@ Instagram: [@widodomaruf](https://www.instagram.com/widodomaruf/) · YouTube: [@
 
 Materi disusun per **November 2026**.
 
-## Struktur
-
-```
-.
-├── index.html   # seluruh halaman: HTML, CSS, dan JavaScript dalam satu file
-└── README.md
-```
-
-Website ini tidak memerlukan proses build, server, atau database. Font dimuat dari Google Fonts. Semua perhitungan berjalan di browser pengunjung.
-
-## Menjalankan di komputer sendiri
-
-Cukup buka `index.html` di browser. Bila ingin menjalankannya lewat server lokal:
-
-```bash
-python3 -m http.server 8000
-# lalu buka http://localhost:8000
-```
-
-## Publikasi
-
-### GitHub Pages
-1. Unggah `index.html` dan `README.md` ke repository publik.
-2. Buka **Settings → Pages**. Pada **Source** pilih **Deploy from a branch**, branch `main`, folder `/ (root)`.
-3. Website tersedia di `https://<username>.github.io/<nama-repo>/`.
-
-### Vercel
-1. Pilih **Add New → Project**, lalu impor repository ini.
-2. Framework Preset: **Other**. Tidak ada build command, dan output directory dikosongkan.
-3. Klik **Deploy**. Setiap commit ke branch `main` otomatis memperbarui website.
-
-## Memperbarui isi
-
-Bagian yang paling sering perlu diperbarui saat aturan berubah ada di `index.html`:
-
-| Yang diubah | Cari di kode |
-|---|---|
-| Daftar jasa PPh 23 dan kode objek | `const JASA` |
-| Tarif jasa konstruksi | `const KONS` |
-| Objek PPh 21 bukan pegawai | `const HON` |
-| Tabel TER PPh 21 | `const TER` |
-| Kode KAP-KJS per sumber dana | `const KJSB` dan `function kapOf` |
-| Soal kuis | `const Q` |
-| FAQ dan glosarium | `const F` dan `const G` |
-| Link Google Form | cari `docs.google.com/forms` |
-
 ## Catatan
 
 Website ini adalah materi edukasi, bukan pengganti peraturan resmi. Untuk kasus khusus atau bila aturan berubah, konfirmasikan ke KPP/KP2KP tempat instansi terdaftar.
