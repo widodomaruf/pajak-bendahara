@@ -1,0 +1,876 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Pahami Pajak Bendahara</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Public+Sans:ital,wght@0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: meja kerja bendahara — satu alat utama (cek transaksi) di atas, lalu materi, alur Coretax, kalender, kalkulator, kuis, FAQ. Kuitansi & stempel sebagai motif. */
+:root{
+  --bg:#f3f5f7; --surface:#ffffff; --sunk:#e9edf1; --ink:#15202b; --muted:#566170; --line:#d5dbe2;
+  --accent:#3f35a3; --accent-soft:#e8e6f8; --ok:#1d7448; --ok-soft:#e1f2e8; --warn:#a24d12; --warn-soft:#fbeadb; --zero:#6b7480;
+  --f-display:"Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --f-body:"Public Sans", "Segoe UI", system-ui, sans-serif;
+  --f-mono:"JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0f141a; --surface:#161d26; --sunk:#1d2530; --ink:#e6eaf0; --muted:#9ca6b4; --line:#2c3644;
+  --accent:#ab9fff; --accent-soft:#272447; --ok:#62cf96; --ok-soft:#173326; --warn:#f2a466; --warn-soft:#3a2617; --zero:#8c96a3; color-scheme:dark }}
+:root[data-theme="dark"]{
+  --bg:#0f141a; --surface:#161d26; --sunk:#1d2530; --ink:#e6eaf0; --muted:#9ca6b4; --line:#2c3644;
+  --accent:#ab9fff; --accent-soft:#272447; --ok:#62cf96; --ok-soft:#173326; --warn:#f2a466; --warn-soft:#3a2617; --zero:#8c96a3; color-scheme:dark }
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.6;
+  padding-left:max(16px, env(safe-area-inset-left,0px));padding-right:max(16px, env(safe-area-inset-right,0px))}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--surface)}
+.wrap{max-width:1080px;margin:0 auto}
+h1,h2,h3{font-family:var(--f-display);line-height:1.15;text-wrap:balance;margin:0}
+h2{font-size:clamp(1.6rem,3.2vw,2.2rem);font-weight:800;letter-spacing:-.01em}
+h3{font-size:1.15rem;font-weight:700}
+p{margin:0}
+a{color:var(--accent)}
+.mono{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.eyebrow{font-family:var(--f-mono);font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);font-weight:600}
+.muted{color:var(--muted)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
+
+/* nav */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:9;background:var(--surface);border-bottom:1px solid var(--line);
+  margin-left:calc(-1 * max(16px, env(safe-area-inset-left,0px)));margin-right:calc(-1 * max(16px, env(safe-area-inset-right,0px)));
+  padding-left:max(16px, env(safe-area-inset-left,0px));padding-right:max(16px, env(safe-area-inset-right,0px))}
+.top .wrap{display:flex;align-items:center;gap:16px;min-height:56px}
+.brand{font-family:var(--f-display);font-weight:800;font-size:1.05rem;white-space:nowrap;display:flex;align-items:center;gap:8px;text-decoration:none;color:var(--ink)}
+.brand .seal{width:26px;height:26px;border-radius:50%;border:2px solid var(--accent);display:grid;place-items:center;font-family:var(--f-mono);font-size:.62rem;color:var(--accent);font-weight:700}
+.top nav{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;min-width:0}
+.top nav a{white-space:nowrap;text-decoration:none;color:var(--muted);font-size:.88rem;font-weight:600;padding:6px 10px;border-radius:6px}
+.top nav a:hover{color:var(--ink);background:var(--sunk)}
+
+section{padding-block:56px;border-bottom:1px solid var(--line)}
+section:last-of-type{border-bottom:0}
+.sec-head{display:grid;gap:10px;max-width:68ch;margin-bottom:28px}
+
+/* hero */
+.hero{padding-block:44px 28px;border-bottom:0}
+.hero h1{font-size:clamp(2rem,5.4vw,3.4rem);font-weight:800;letter-spacing:-.02em;max-width:18ch}
+.hero h1 em{font-style:normal;color:var(--accent)}
+.hero .lede{max-width:60ch;margin-top:14px;font-size:1.08rem;color:var(--muted)}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+.chip{font-family:var(--f-mono);font-size:.75rem;border:1px solid var(--line);background:var(--surface);padding:4px 10px;border-radius:999px;color:var(--muted)}
+
+/* checker */
+.checker{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:20px;align-items:start}
+@media (max-width:820px){.checker{grid-template-columns:minmax(0,1fr)}}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:20px}
+.form{display:grid;gap:14px}
+.field{display:grid;gap:6px}
+.field label,.field .lbl{font-weight:600;font-size:.88rem}
+select,input[type=text],input[type=number]{font:inherit;font-size:.95rem;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:9px 11px;width:100%}
+.money{position:relative}
+.money span{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--muted);font-family:var(--f-mono);font-size:.85rem}
+.money input{padding-left:38px;font-family:var(--f-mono)}
+.toggles{display:grid;gap:8px}
+.tg{display:flex;gap:10px;align-items:flex-start;font-size:.9rem;cursor:pointer}
+.tg input{margin-top:4px;accent-color:var(--accent);width:16px;height:16px;flex:none}
+.hint{font-size:.8rem;color:var(--muted)}
+.hint:empty{display:none}
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.seg label{cursor:pointer}
+.seg input{position:absolute;opacity:0;pointer-events:none}
+.seg span{display:grid;gap:2px;border:1px solid var(--line);background:var(--bg);border-radius:8px;padding:9px 12px;font-weight:700;font-size:.92rem}
+.seg small{font-weight:400;font-size:.75rem;color:var(--muted)}
+.seg input:checked + span{border-color:var(--accent);background:var(--accent-soft);color:var(--accent)}
+.seg input:focus-visible + span{outline:2px solid var(--accent);outline-offset:2px}
+.seg input:disabled + span{opacity:.45;cursor:not-allowed}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width:460px){.row2{grid-template-columns:1fr}}
+
+/* kuitansi */
+.receipt{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);position:relative;overflow:hidden}
+.receipt::before{content:"";position:absolute;left:0;right:0;top:0;height:6px;
+  background:repeating-linear-gradient(90deg,var(--accent) 0 14px,transparent 14px 22px)}
+.rc-head{padding:22px 20px 14px;display:flex;justify-content:space-between;gap:12px;align-items:flex-start;border-bottom:1px dashed var(--line)}
+.rc-head .tot{font-family:var(--f-display);font-size:1.6rem;font-weight:800}
+.stamp{font-family:var(--f-mono);font-size:.66rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);
+  border:2px solid var(--accent);border-radius:6px;padding:4px 8px;transform:rotate(-4deg);white-space:nowrap;opacity:.9}
+.rc-lines{padding:6px 20px}
+.line{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 14px;padding:12px 0;border-bottom:1px solid var(--line)}
+.line:last-child{border-bottom:0}
+.line .nm{font-weight:700}
+.line .amt{font-family:var(--f-mono);font-weight:600;text-align:right;font-variant-numeric:tabular-nums}
+.line .why{grid-column:1/-1;font-size:.84rem;color:var(--muted)}
+.line .meta{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:6px}
+.tag{font-family:var(--f-mono);font-size:.7rem;padding:2px 7px;border-radius:5px;background:var(--sunk);color:var(--muted)}
+.tag.kap{background:var(--accent-soft);color:var(--accent)}
+.line.skip .nm,.line.skip .amt{color:var(--zero)}
+.line.skip .amt{text-decoration:line-through}
+.rc-foot{padding:14px 20px 18px;background:var(--sunk);display:grid;gap:6px;font-size:.88rem}
+.rc-foot .kv{display:flex;justify-content:space-between;gap:12px}
+.rc-foot .kv b{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.sample{font-size:.78rem;color:var(--muted);margin-top:10px}
+
+/* materi */
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:18px}
+.tabs button{font:inherit;font-weight:600;font-size:.88rem;border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:7px 14px;border-radius:999px;cursor:pointer}
+.tabs button[aria-selected=true]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.topic{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:24px}
+@media (max-width:820px){.topic{grid-template-columns:minmax(0,1fr)}}
+.prose{display:grid;gap:12px;max-width:66ch}
+.prose ul{margin:0;padding-left:20px;display:grid;gap:6px}
+.tbl-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:var(--r);background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:.88rem}
+th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:.72rem;font-family:var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);background:var(--sunk);font-weight:600}
+tr:last-child td{border-bottom:0}
+td.r{text-align:right;font-family:var(--f-mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+.note{border-left:3px solid var(--warn);background:var(--warn-soft);padding:10px 14px;border-radius:0 8px 8px 0;font-size:.9rem}
+.note.ok{border-color:var(--ok);background:var(--ok-soft)}
+
+/* sasaran */
+.who{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+@media (max-width:900px){.who{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:520px){.who{grid-template-columns:minmax(0,1fr)}}
+.who article{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px;display:grid;gap:8px;align-content:start}
+.who .sys{font-family:var(--f-mono);font-size:.72rem;color:var(--accent)}
+.who ul{margin:0;padding-left:18px;font-size:.88rem;display:grid;gap:5px}
+
+/* alur */
+.steps{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:0;counter-reset:s}
+@media (max-width:900px){.steps{grid-template-columns:minmax(0,1fr)}}
+.steps li{counter-increment:s;padding:16px 16px 18px;border-top:3px solid var(--accent);background:var(--surface);border-right:1px solid var(--line);display:grid;gap:6px;align-content:start}
+.steps li:last-child{border-right:0}
+@media (max-width:900px){.steps li{border-right:0;border-bottom:1px solid var(--line)}}
+.steps li::before{content:"Langkah " counter(s);font-family:var(--f-mono);font-size:.7rem;color:var(--accent);letter-spacing:.08em;text-transform:uppercase;font-weight:600}
+.steps p{font-size:.88rem;color:var(--muted)}
+.steps-box{border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+
+/* kalender */
+.cal{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.4fr);gap:20px;align-items:start}
+@media (max-width:820px){.cal{grid-template-columns:minmax(0,1fr)}}
+.next{background:var(--ink);color:var(--bg);border-radius:var(--r);padding:22px;display:grid;gap:8px}
+.next .d{font-family:var(--f-display);font-size:2.6rem;font-weight:800;line-height:1}
+.next .eyebrow{color:var(--bg);opacity:.75}
+.cal-list{display:grid;gap:10px}
+.mrow{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:12px 16px;display:grid;grid-template-columns:110px repeat(3,minmax(0,1fr));gap:10px;align-items:center}
+@media (max-width:600px){.mrow{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.mrow .mm{grid-column:1/-1}}
+.mrow .mm{font-weight:700;font-size:.9rem}
+.dl{display:grid;gap:1px}
+.dl small{font-size:.72rem;color:var(--muted)}
+.dl b{font-family:var(--f-mono);font-size:.85rem;font-variant-numeric:tabular-nums}
+.dl.past b{color:var(--zero);text-decoration:line-through}
+.dl.soon b{color:var(--warn)}
+
+/* kalkulator */
+.calc{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
+@media (max-width:820px){.calc{grid-template-columns:minmax(0,1fr)}}
+.out{margin-top:6px;background:var(--sunk);border-radius:8px;padding:14px;display:grid;gap:6px;font-size:.9rem}
+.out .kv{display:flex;justify-content:space-between;gap:12px}
+.out .kv b{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.out .big{font-family:var(--f-display);font-size:1.5rem;font-weight:800}
+
+/* kuis */
+.quiz{max-width:720px}
+.qcard{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:22px;display:grid;gap:14px}
+.qprog{display:flex;justify-content:space-between;font-family:var(--f-mono);font-size:.78rem;color:var(--muted)}
+.qbar{height:4px;background:var(--sunk);border-radius:2px;overflow:hidden}
+.qbar i{display:block;height:100%;background:var(--accent);transition:width .3s}
+.opts{display:grid;gap:8px}
+.opts button{font:inherit;text-align:left;border:1px solid var(--line);background:var(--bg);color:var(--ink);padding:11px 14px;border-radius:8px;cursor:pointer}
+.opts button:hover:not(:disabled){border-color:var(--accent)}
+.opts button.right{border-color:var(--ok);background:var(--ok-soft)}
+.opts button.wrong{border-color:var(--warn);background:var(--warn-soft)}
+.opts button:disabled{cursor:default}
+.btn{font:inherit;font-weight:700;border:0;background:var(--accent);color:var(--surface);padding:10px 18px;border-radius:8px;cursor:pointer;justify-self:start}
+.btn.ghost{background:transparent;color:var(--accent);border:1px solid var(--accent)}
+
+/* faq */
+.faq-grid{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:28px}
+@media (max-width:820px){.faq-grid{grid-template-columns:minmax(0,1fr)}}
+details{border-bottom:1px solid var(--line);padding-block:12px}
+summary{font-weight:700;cursor:pointer;list-style:none;display:flex;justify-content:space-between;gap:12px}
+summary::after{content:"+";font-family:var(--f-mono);color:var(--accent)}
+details[open] summary::after{content:"–"}
+details p{margin-top:8px;color:var(--muted);font-size:.93rem}
+.gloss{display:grid;gap:0;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:6px 16px}
+.gloss input{margin-block:10px}
+.gloss dl{margin:0}
+.gloss dt{font-family:var(--f-mono);font-weight:600;font-size:.85rem;color:var(--accent);padding-top:10px}
+.gloss dd{margin:0;padding-bottom:10px;border-bottom:1px solid var(--line);font-size:.88rem}
+.gloss dd:last-child{border-bottom:0}
+
+.ask{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:28px;align-items:start}
+@media (max-width:820px){.ask{grid-template-columns:minmax(0,1fr)}}
+.mailbox{margin-top:8px;display:grid;gap:4px}
+.mailrow{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.mailrow b{font-size:1rem;user-select:all;word-break:break-all}
+.mailrow .btn{padding:6px 12px;font-size:.85rem}
+textarea{font:inherit;font-size:.95rem;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:9px 11px;width:100%;resize:vertical}
+.askcard{display:grid;gap:12px}
+.askcard .btn{text-decoration:none;justify-self:start}
+.askhow{margin:0;padding-left:20px;display:grid;gap:4px;color:var(--muted);font-size:.92rem}
+.credit{display:flex;flex-wrap:wrap;justify-content:space-between;gap:16px;align-items:center;border:1px solid var(--line);background:var(--surface);border-radius:var(--r);padding:18px 20px;color:var(--ink)}
+.who-name{font-family:var(--f-display);font-weight:800;font-size:1.25rem}
+.socials{display:flex;flex-wrap:wrap;gap:10px}
+.socials a{text-decoration:none;border:1px solid var(--line);border-radius:999px;padding:7px 14px;color:var(--ink);font-weight:600;font-size:.88rem;display:inline-flex;gap:8px;align-items:center}
+.socials a .mono{font-size:.7rem;color:var(--accent);text-transform:uppercase;letter-spacing:.06em}
+.socials a:hover{border-color:var(--accent)}
+footer{padding-block:28px 48px;font-size:.84rem;color:var(--muted);display:grid;gap:10px}
+footer ul{margin:0;padding-left:18px;display:grid;gap:4px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+html{scroll-behavior:smooth;scroll-padding-top:70px}
+</style>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="#cek"><span class="seal">PJK</span>Pahami Pajak Bendahara</a>
+    <nav aria-label="Navigasi bagian">
+      <a href="#cek">Cek Transaksi</a><a href="#materi">Materi</a><a href="#sasaran">Jenis Bendahara</a><a href="#coretax">Alur Coretax</a><a href="#kalender">Jatuh Tempo</a><a href="#kalkulator">PPh 21</a><a href="#kuis">Kuis</a><a href="#faq">FAQ</a><a href="#tanya">Tanya</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="hero">
+    <p class="eyebrow">Panduan bendahara instansi pemerintah · aturan per November 2026</p>
+    <h1>Potong, setor, lapor. <em>Tepat</em> dan tepat waktu.</h1>
+    <p class="lede">Belajar dan langsung praktik kewajiban pajak bendahara APBN, APBD, dana BOS, dan Dana Desa: memotong, memungut, menyetor, dan melapor lewat Coretax DJP.</p>
+    <div class="chips"><span class="chip">PMK 81/2024</span><span class="chip">PMK 59/2022 jo. 11/2025</span><span class="chip">PMK 131/2024</span><span class="chip">PP 58/2023</span><span class="chip">PP 55/2022 jo. PP 20/2026</span><span class="chip">PP 9/2022</span></div>
+  </section>
+
+  <!-- CEK TRANSAKSI -->
+  <section id="cek" style="padding-top:8px">
+    <div class="sec-head">
+      <p class="eyebrow">Alat utama</p>
+      <h2>Cek pajak satu transaksi</h2>
+      <p class="muted">Pilih lawan transaksi, jenis belanja, dan nilainya. Hasilnya berbentuk kuitansi: pajak yang dipotong atau dipungut, jumlahnya, kode objek pajak, jenis bukti potong, KAP-KJS, dan jumlah yang dibayarkan.</p>
+    </div>
+    <div class="checker">
+      <form class="panel form" id="fCek" autocomplete="off">
+        <div class="field"><span class="lbl" id="lblLawan">Lawan transaksi</span>
+          <div class="seg" role="radiogroup" aria-labelledby="lblLawan">
+            <label><input type="radio" name="cLawan" id="cBadan" value="badan" checked><span>Badan<small>PT, CV, koperasi, yayasan</small></span></label>
+            <label><input type="radio" name="cLawan" id="cOp" value="op"><span>Orang pribadi<small>perorangan, termasuk usaha perorangan</small></span></label>
+          </div>
+          <span class="hint" id="cLawanHint"></span></div>
+        <div class="row2">
+          <div class="field"><label for="cDana">Sumber dana</label>
+            <select id="cDana"><option value="apbn">APBN (satker)</option><option value="apbd">APBD (OPD)</option><option value="bos">Dana BOS (sekolah)</option><option value="desa">Dana Desa / APBDes</option></select></div>
+          <div class="field"><label for="cJenis">Jenis belanja / objek pajak</label>
+            <select id="cJenis"></select></div>
+        </div>
+        <div class="field"><label for="cNilai" id="cNilaiLbl">Nilai transaksi (sebelum PPN)</label>
+          <div class="money"><span>Rp</span><input id="cNilai" type="text" inputmode="numeric" value="15.000.000"></div>
+          <span class="hint" id="cNilaiHint">Harga di kuitansi, belum termasuk PPN. Jangan memecah satu transaksi menjadi beberapa kuitansi.</span></div>
+        <div class="field" id="fMat" hidden><label for="cMat">Bagian material/barang dengan bukti terpisah (opsional)</label>
+          <div class="money"><span>Rp</span><input id="cMat" type="text" inputmode="numeric" value=""></div>
+          <span class="hint">PMK 141/2015: material yang dirinci dan ada faktur atau bukti pembeliannya tidak termasuk dasar PPh 23. Tanpa bukti, seluruh tagihan menjadi dasar.</span></div>
+        <div class="row2" id="fHari" hidden>
+          <div class="field"><label for="cHari">Jumlah hari kerja</label><input id="cHari" type="number" min="1" max="31" value="10"></div>
+          <div class="field"><span class="lbl">Upah rata-rata sehari</span><b class="mono" id="cPerHari" style="padding-top:8px">Rp0</b></div>
+        </div>
+        <div class="field" id="fPtkp" hidden><label for="cPtkp">Status PTKP penerima</label>
+          <select id="cPtkp"><option>TK/0</option><option>TK/1</option><option>TK/2</option><option>TK/3</option><option>K/0</option><option>K/1</option><option>K/2</option><option>K/3</option></select></div>
+        <div class="field" id="fStatus"><span class="lbl">Status rekanan & cara bayar</span>
+          <div class="toggles">
+            <label class="tg"><input type="checkbox" id="cPkp" checked><span>Rekanan adalah <b>PKP</b> (menerbitkan faktur pajak)</span></label>
+            <label class="tg"><input type="checkbox" id="cUmkm"><span>Rekanan punya <b>Surat Keterangan PP 55</b> (PPh final UMKM 0,5%)</span></label>
+            <label class="tg"><input type="checkbox" id="cKkp"><span>Dibayar dengan <b>Kartu Kredit Pemerintah</b></span></label>
+            <label class="tg"><input type="checkbox" id="cMp"><span>Dibeli lewat <b>marketplace pengadaan</b> (mis. SIPLah) yang sudah memungut pajak</span></label>
+          </div></div>
+      </form>
+
+      <div>
+        <div class="receipt" aria-live="polite">
+          <div class="rc-head">
+            <div><p class="eyebrow">Ringkasan pajak</p><p class="tot mono" id="rTot">Rp0</p><p class="hint">total pajak yang ditangani bendahara</p></div>
+            <span class="stamp" id="rStamp">Dipotong</span>
+          </div>
+          <div class="rc-lines" id="rLines"></div>
+          <div class="rc-foot" id="rFoot"></div>
+        </div>
+        <p class="sample">Angka awal adalah contoh. Hasil ini alat bantu belajar; untuk kasus khusus (SKB, fasilitas, kontrak tahun jamak) konfirmasi ke KPP tempat instansi terdaftar.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- MATERI -->
+  <section id="materi">
+    <div class="sec-head">
+      <p class="eyebrow">Materi</p>
+      <h2>Lima jenis pajak yang dikelola bendahara</h2>
+      <p class="muted">Bendahara bukan pembayar pajak atas belanjanya. Bendahara adalah <b>pemotong dan pemungut</b>: menahan sebagian pembayaran, menyetorkannya ke kas negara, lalu melaporkannya.</p>
+    </div>
+    <div class="tabs" role="tablist" id="mTabs"></div>
+    <div id="mBody"></div>
+  </section>
+
+  <!-- SASARAN -->
+  <section id="sasaran">
+    <div class="sec-head">
+      <p class="eyebrow">Jenis bendahara</p>
+      <h2>Kewajibannya sama, jalurnya berbeda</h2>
+      <p class="muted">Semua bendahara memakai Coretax DJP untuk bukti potong dan SPT Masa. Yang berbeda adalah aplikasi keuangan dan cara pajak disetor.</p>
+    </div>
+    <div class="who">
+      <article><p class="sys">SAKTI · SPM/SP2D · KPPN</p><h3>Satker APBN</h3><ul>
+        <li>Pembayaran LS: pajak dicantumkan sebagai potongan di SPM dan disetor otomatis saat SP2D terbit, dengan NTPN.</li>
+        <li>Pembayaran UP/GUP: bendahara pengeluaran membuat kode billing dan menyetor sendiri.</li>
+        <li>Tetap wajib membuat bukti potong di Coretax untuk setiap potongan.</li></ul></article>
+      <article><p class="sys">SIPD · SP2D BUD</p><h3>OPD APBD</h3><ul>
+        <li>Setiap OPD terdaftar dengan NPWP sendiri; bendahara pengeluaran dan pembantu mengelola pajak belanjanya.</li>
+        <li>Pajak LS umumnya dipotong saat SP2D oleh BUD; pastikan potongan tercatat dan bukti potongnya dibuat.</li>
+        <li>Belanja dari UP/GU disetor bendahara sendiri lewat kode billing.</li></ul></article>
+      <article><p class="sys">ARKAS / SIPLah · subunit</p><h3>Bendahara BOS</h3><ul>
+        <li>Sekolah negeri didaftarkan sebagai <b>subunit</b> dinas pendidikan di Coretax, dengan PIC.</li>
+        <li><b>PPh 22 tidak dipungut</b> atas pembelian barang dari dana BOS (Pasal 219 PMK 81/2024).</li>
+        <li>PPh 21 honor, PPh 23 jasa, dan PPN tetap diperhatikan. Belanja lewat SIPLah biasanya sudah dipungut penyelenggara.</li></ul></article>
+      <article><p class="sys">Siskeudes · Kaur Keuangan</p><h3>Bendahara Desa</h3><ul>
+        <li>Pemerintah desa termasuk instansi pemerintah: memungut PPh 22 dan PPN, memotong PPh 21, 23, dan 4(2).</li>
+        <li>Siltap dan tunjangan perangkat desa dipotong PPh 21 dengan tarif efektif (TER).</li>
+        <li>Buat bukti potong, setor, dan lapor SPT Masa sendiri di Coretax.</li></ul></article>
+    </div>
+  </section>
+
+  <!-- CORETAX -->
+  <section id="coretax">
+    <div class="sec-head">
+      <p class="eyebrow">Alur kerja</p>
+      <h2>Dari kuitansi sampai SPT Masa di Coretax</h2>
+      <p class="muted">Urutan ini berlaku untuk setiap masa pajak (satu bulan kalender).</p>
+    </div>
+    <div class="steps-box"><ol class="steps">
+      <li><h3>Siapkan akun</h3><p>Aktivasi akun Coretax instansi, tunjuk PIC, beri peran (role) ke bendahara. Sekolah didaftarkan sebagai subunit.</p></li>
+      <li><h3>Hitung saat bayar</h3><p>Identifikasi jenis belanja dan status rekanan sebelum membayar. Gunakan alat cek di atas.</p></li>
+      <li><h3>Buat bukti potong</h3><p>PPh 21 bulanan: BPMP. PPh 21 bukan pegawai: BP21. PPh 22, 23, 4(2), final UMKM: BPPU. Transaksi bebas tetap dibuat dengan nilai nol.</p></li>
+      <li><h3>Setor</h3><p>Lewat potongan SPM/SP2D, kode billing dari SPT, atau deposit pajak (411618-100). Simpan NTPN.</p></li>
+      <li><h3>Lapor SPT Masa</h3><p>SPT Masa PPh 21/26, SPT Masa PPh Unifikasi, dan SPT Masa PPN Pemungut. Bukti potong otomatis masuk ke draf SPT.</p></li>
+    </ol></div>
+    <p class="note" style="margin-top:16px">Deposit pajak bukan pelunasan. Saldo deposit baru dialokasikan ke jenis pajaknya setelah bukti potong dibuat dan SPT Masa dilaporkan.</p>
+  </section>
+
+  <!-- KALENDER -->
+  <section id="kalender">
+    <div class="sec-head">
+      <p class="eyebrow">Jatuh tempo · PMK 81/2024</p>
+      <h2>Kapan setor, kapan lapor</h2>
+      <p class="muted">PPh disetor paling lambat tanggal 15 bulan berikutnya dan dilaporkan paling lambat tanggal 20. PPN yang dipungut disetor dan dilaporkan paling lambat akhir bulan berikutnya. Bila jatuh pada Sabtu/Minggu, tanggal digeser ke hari kerja berikutnya (libur nasional belum dihitung otomatis).</p>
+    </div>
+    <div class="cal">
+      <div class="next" id="calNext"></div>
+      <div class="cal-list" id="calList"></div>
+    </div>
+    <p class="note ok" style="margin-top:16px">Di satker dan OPD, pajak atas pembayaran LS praktis tersetor pada hari SP2D. Untuk UP/GU, biasakan setor segera setelah membayar rekanan; jangan menunggu tanggal 15. Ikuti juga juknis internal instansi Anda.</p>
+  </section>
+
+  <!-- KALKULATOR -->
+  <section id="kalkulator">
+    <div class="sec-head">
+      <p class="eyebrow">Kalkulator · PP 58/2023 & PMK 168/2023</p>
+      <h2>Hitung PPh 21</h2>
+      <p class="muted">Januari–November memakai tarif efektif rata-rata (TER) bulanan. Masa Desember dihitung ulang setahun dengan tarif Pasal 17, lalu dikurangi PPh yang sudah dipotong.</p>
+    </div>
+    <div class="calc">
+      <form class="panel form" id="fTer" autocomplete="off">
+        <h3>Pegawai tetap (gaji bulanan)</h3>
+        <div class="row2">
+          <div class="field"><label for="tPtkp">Status PTKP</label>
+            <select id="tPtkp"><option>TK/0</option><option>TK/1</option><option>TK/2</option><option>TK/3</option><option>K/0</option><option selected>K/1</option><option>K/2</option><option>K/3</option></select></div>
+          <div class="field"><label for="tBruto">Penghasilan bruto sebulan</label>
+            <div class="money"><span>Rp</span><input id="tBruto" type="text" inputmode="numeric" value="8.750.000"></div></div>
+        </div>
+        <span class="hint">Bruto = gaji pokok + tunjangan + premi asuransi yang dibayar pemberi kerja. Untuk PNS/PPPK, tunjangan istri dan anak termasuk bruto.</span>
+        <div class="out" id="tOut"></div>
+      </form>
+      <form class="panel form" id="fHar" autocomplete="off">
+        <h3>Pegawai tidak tetap (upah harian)</h3>
+        <div class="row2">
+          <div class="field"><label for="hUpah">Upah sehari</label>
+            <div class="money"><span>Rp</span><input id="hUpah" type="text" inputmode="numeric" value="150.000"></div></div>
+          <div class="field"><label for="hHari">Jumlah hari</label>
+            <input id="hHari" type="number" min="1" max="31" value="12"></div>
+        </div>
+        <span class="hint">TER harian: sampai Rp450.000 sehari 0%; di atas Rp450.000 sampai Rp2.500.000 sehari 0,5%. Di atas Rp2,5 juta sehari: tarif Pasal 17 × 50% bruto.</span>
+        <div class="out" id="hOut"></div>
+      </form>
+    </div>
+  </section>
+
+  <!-- KUIS -->
+  <section id="kuis">
+    <div class="sec-head">
+      <p class="eyebrow">Latihan kasus</p>
+      <h2>Uji pemahaman: 9 kasus bendahara</h2>
+      <p class="muted">Setiap jawaban disertai penjelasan dan dasar aturannya.</p>
+    </div>
+    <div class="quiz"><div class="qcard" id="qCard"></div></div>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faq">
+    <div class="faq-grid">
+      <div>
+        <div class="sec-head"><p class="eyebrow">Tanya jawab</p><h2>Pertanyaan yang sering muncul</h2></div>
+        <div id="faqList"></div>
+      </div>
+      <div>
+        <div class="sec-head"><p class="eyebrow">Glosarium</p><h2>Istilah</h2></div>
+        <div class="gloss">
+          <label for="gq" class="hint" style="padding-top:10px">Cari istilah</label>
+          <input type="text" id="gq" placeholder="mis. NTPN, BPPU, TER">
+          <dl id="gList"></dl>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TANYA -->
+  <section id="tanya">
+    <div class="ask">
+      <div class="sec-head" style="margin-bottom:0">
+        <p class="eyebrow">Kolom pertanyaan</p>
+        <h2>Masih ragu? Tanyakan kasus Anda</h2>
+        <p class="muted">Kirim pertanyaan lewat formulir. Sertakan jenis belanja, nilai, dan status rekanan agar jawabannya tepat. Bisa juga langsung lewat email.</p>
+        <div class="mailbox">
+          <span class="hint">Alamat email</span>
+          <div class="mailrow"><b class="mono" id="aEmail">hi.widodomaruf@gmail.com</b><button type="button" class="btn ghost" id="aCopyMail">Salin</button></div>
+        </div>
+      </div>
+      <div class="panel askcard">
+        <p class="eyebrow">Formulir pertanyaan</p>
+        <h3>Isi formulir Tanya Pajak Bendahara</h3>
+        <ol class="askhow">
+          <li>Tulis nama, kontak untuk balasan, dan instansi.</li>
+          <li>Pilih jenis bendahara dan topik pertanyaan.</li>
+          <li>Ceritakan kasusnya: jenis belanja, nilai, dan siapa rekanannya.</li>
+        </ol>
+        <a class="btn" href="https://docs.google.com/forms/d/e/1FAIpQLSdQYmNcDqAFkETm2clxgcxkeIOEVRQZ5DKSZ0kKltjGs8USaw/viewform" target="_blank" rel="noopener">Buka formulir pertanyaan</a>
+        <p class="hint">Formulir terbuka di tab baru (Google Form). Jawaban dikirim ke email atau WhatsApp yang Anda cantumkan.</p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="wrap">
+  <div class="credit">
+    <div><p class="eyebrow">Disusun oleh</p><p class="who-name">Muhammad Widodo Ma'ruf</p><p class="muted">Edukator Pajak</p></div>
+    <div class="socials">
+      <a href="https://www.instagram.com/widodomaruf/" target="_blank" rel="noopener"><span class="mono">Instagram</span> @widodomaruf</a>
+      <a href="https://www.youtube.com/@widodomaruf" target="_blank" rel="noopener"><span class="mono">YouTube</span> @widodomaruf</a>
+    </div>
+  </div>
+  <p>Materi edukasi, disusun November 2026. Bukan pengganti peraturan resmi. Bila ada perubahan aturan atau keraguan, konfirmasi ke KPP/KP2KP tempat instansi terdaftar.</p>
+</footer>
+
+<script>
+(function(){
+const fmt = n => "Rp" + Math.round(n).toLocaleString("id-ID");
+const pct = p => (p*100).toLocaleString("id-ID",{maximumFractionDigits:2}) + "%";
+const parse = s => Number(String(s).replace(/[^\d]/g,"")) || 0;
+function moneyInput(el, cb){
+  el.addEventListener("input", () => {
+    const v = parse(el.value); el.value = v ? v.toLocaleString("id-ID") : ""; cb();
+  });
+}
+// Pasal 17
+const P17 = [[60e6,.05],[250e6,.15],[500e6,.25],[5e9,.30],[Infinity,.35]];
+function pasal17(pkp){ let tax=0, prev=0; for(const [lim,r] of P17){ if(pkp>prev){ tax += (Math.min(pkp,lim)-prev)*r; prev=lim; } } return tax; }
+
+/* ---------- CEK TRANSAKSI ---------- */
+const $ = id => document.getElementById(id);
+const KJSB = {apbn:"910", apbd:"920", bos:"920", desa:"930"};
+function kapOf(kode, dana){
+  const p = kode.slice(0,6);
+  return ({"21-100":"411121-100","21-402":"411121-402","22-910":"411122-"+KJSB[dana],"24-104":"411124-104","24-100":"411124-100","28-403":"411128-403","28-409":"411128-409","28-423":"411128-423"})[p] || "—";
+}
+const bupotOf = kode => kode.startsWith("21") ? "BP21" : "BPPU";
+// [value, label, kode badan, kode OP (PPh 21 bila OP), boleh UMKM]
+const JASA = [
+ ["j01","Jasa teknik","24-104-01","21-100-07",0],["j02","Jasa manajemen","24-104-02","21-100-07",0],
+ ["j03","Jasa konsultan (non-konstruksi)","24-104-03","21-100-07",0],["j04","Jasa penilai (appraisal)","24-104-04","21-100-07",0],
+ ["j06","Jasa akuntansi, pembukuan, atestasi","24-104-06","21-100-07",0],["j07","Jasa hukum","24-104-07","21-100-07",0],
+ ["j08","Jasa arsitektur","24-104-08","21-100-07",0],["j10","Jasa perancang / desain","24-104-10","21-100-20",1],
+ ["j17","Penyedia tenaga kerja (outsourcing)","24-104-17","21-100-20",1],["j23","Sarana promosi: banner, baliho, spanduk, foto","24-104-23","21-100-20",1],
+ ["j24","Software/hardware/komputer, termasuk perawatan","24-104-24","21-100-20",1],["j25","Pembuatan/pengelolaan website","24-104-25","21-100-20",1],
+ ["j26","Internet termasuk sambungannya","24-104-26","21-100-20",1],["j28","Instalasi mesin, listrik, AC, telepon","24-104-28","21-100-20",1],
+ ["j29","Perawatan/perbaikan mesin, listrik, AC","24-104-29","21-100-20",1],["j30","Perawatan kendaraan","24-104-30","21-100-20",1],
+ ["j32","Penyelidikan dan keamanan","24-104-32","21-100-20",1],["j33","Event organizer","24-104-33","21-100-20",1],
+ ["j34","Periklanan / penyediaan ruang media","24-104-34","21-100-20",1],["j35","Pembasmian hama","24-104-35","21-100-20",1],
+ ["j36","Kebersihan / cleaning service","24-104-36","21-100-20",1],["j38","Pemeliharaan kolam","24-104-38","21-100-20",1],
+ ["j39","Katering / tata boga","24-104-39","21-100-20",1],["j42","Pengurusan dokumen","24-104-42","21-100-20",1],
+ ["j45","Laboratorium / pengujian","24-104-45","21-100-20",1],["j46","Pengelolaan parkir","24-104-46","21-100-20",1],
+ ["j50","Pemeliharaan tanaman","24-104-50","21-100-20",1],["j53","Dekorasi","24-104-53","21-100-20",1],
+ ["j54","Pencetakan / penerbitan","24-104-54","21-100-20",1],["j55","Penerjemahan","24-104-55","21-100-19",0],
+ ["j56","Pengangkutan / ekspedisi","24-104-56","21-100-20",1],["j60","Pelatihan / kursus","24-104-60","21-100-18",0],
+ ["j62","Sertifikasi","24-104-62","21-100-20",1],["j63","Survei","24-104-63","21-100-20",1],
+ ["j65","Jasa lain yang dibebankan APBN/APBD","24-104-65","21-100-20",1]
+];
+const KONS = [["k22","Pelaksana: SBU kecil / SKK perorangan","28-409-22",.0175],["k24","Pelaksana: sertifikat selain kecil (menengah/besar)","28-409-24",.0265],
+ ["k23","Pelaksana: tanpa sertifikat","28-409-23",.04],["k25","Konstruksi terintegrasi: ber-SBU","28-409-25",.0265],
+ ["k26","Konstruksi terintegrasi: tanpa SBU","28-409-26",.04],["k27","Konsultansi: bersertifikat","28-409-27",.035],["k28","Konsultansi: tanpa sertifikat","28-409-28",.06]];
+// [value, label, kode, deemed %]
+const HON = [["h18","Narasumber, pengajar, pelatih, penceramah, penyuluh, moderator","21-100-18",50],
+ ["h07","Tenaga ahli (dokter, notaris, konsultan, akuntan, arsitek)","21-100-07",50],["h19","Pengarang, peneliti, penerjemah","21-100-19",50],
+ ["h20","Pemberi jasa dalam segala bidang","21-100-20",50],["h22","Pengawas / pengelola proyek","21-100-22",50],
+ ["h33","Seniman: MC, penyanyi, pemain musik, penari, kreator konten","21-100-33",50],["h34","Olahragawan","21-100-34",50],
+ ["h14","Peserta rapat, seminar, lokakarya, kunjungan kerja","21-100-14",100],["h15","Anggota panitia penyelenggara kegiatan","21-100-15",100],
+ ["h16","Peserta pendidikan, pelatihan, magang","21-100-16",100],["h36","Peserta perlombaan","21-100-36",100],["h17","Peserta kegiatan lainnya","21-100-17",100]];
+const ITEM = {};
+const og = (label, rows) => `<optgroup label="${label}">${rows.map(r=>`<option value="${r[0]}">${r[1]}</option>`).join("")}</optgroup>`;
+ITEM.barang={kind:"p22"}; ITEM.util={kind:"util"}; ITEM.sewaharta={kind:"sewaharta"}; ITEM.sewatb={kind:"sewatb"};
+JASA.forEach(r=>ITEM[r[0]]={kind:"jasa",bk:r[2],ok:r[3],umkm:!!r[4],nm:r[1]});
+KONS.forEach(r=>ITEM[r[0]]={kind:"kons",kode:r[2],rate:r[3]});
+HON.forEach(r=>ITEM[r[0]]={kind:"p21",kode:r[2],deem:r[3],oponly:1,nm:r[1]});
+ITEM.harian={kind:"harian",oponly:1}; ITEM.ptt={kind:"ter",oponly:1};
+ITEM.pns4={kind:"pns",kode:"21-402-04",rate:0,oponly:1}; ITEM.pns2={kind:"pns",kode:"21-402-02",rate:.05,oponly:1}; ITEM.pns3={kind:"pns",kode:"21-402-03",rate:.15,oponly:1};
+$("cJenis").innerHTML =
+  og("Barang",[["barang","Pembelian barang (ATK, komputer, bahan)"],["util","BBM, listrik, air, benda pos"]]) +
+  og("Jasa (PMK 141/2015)",JASA) +
+  og("Sewa",[["sewaharta","Sewa kendaraan, alat, tenda, sound system"],["sewatb","Sewa tanah / bangunan / gedung"]]) +
+  og("Jasa konstruksi (PP 9/2022)",KONS) +
+  og("Honor & imbalan orang pribadi (PPh 21)",HON.concat([["harian","Upah harian / mingguan / borongan"],["ptt","Upah pegawai tidak tetap dibayar bulanan"]])) +
+  og("Honor PNS/TNI/Polri dari APBN/APBD (final)",[["pns4","Golongan I–II / Tamtama, Bintara"],["pns2","Golongan III / Perwira Pertama"],["pns3","Golongan IV / Perwira Menengah-Tinggi / pejabat negara"]]);
+
+function cek(){
+  const dana=$("cDana").value, j=$("cJenis").value, it=ITEM[j], n=parse($("cNilai").value);
+  if(it.oponly){ $("cOp").checked=true; }
+  $("cBadan").disabled = !!it.oponly;
+  const op = $("cOp").checked;
+  const pkp=$("cPkp").checked, kkp=$("cKkp").checked, mp=$("cMp").checked;
+  const isHonor = ["p21","harian","ter","pns"].includes(it.kind);
+  const umkmOK = (it.kind==="p22"||it.kind==="sewaharta"||(it.kind==="jasa"&&(!op||it.umkm)));
+  const umkm=$("cUmkm").checked && umkmOK;
+  const showMat = it.kind==="jasa" && !op && j!=="j39";
+  $("fMat").hidden=!showMat; $("fHari").hidden=it.kind!=="harian"; $("fPtkp").hidden=it.kind!=="ter";
+  $("fStatus").hidden=isHonor;
+  $("cUmkm").closest(".tg").style.opacity = umkmOK ? 1 : .45;
+  $("cNilaiLbl").textContent = isHonor ? "Penghasilan bruto yang dibayarkan" : "Nilai transaksi (sebelum PPN)";
+  $("cLawanHint").textContent = it.oponly ? "Objek ini hanya untuk penerima orang pribadi."
+    : (it.kind==="jasa" && op) ? "Jasa oleh orang pribadi dipotong PPh 21, bukan PPh 23 (PMK 141/2015 Pasal 1 ayat 1)." : "";
+
+  const kjs=KJSB[dana], kapPpn="411211-"+kjs;
+  const lines=[]; let tot=0;
+  const add=o=>{ lines.push(o); if(!o.skip) tot+=o.amt; };
+  const pph=(nm,kode,amt,why,skip)=>add({nm,amt,why:skip||why,skip:skip||null,tags:[kapOf(kode,dana),bupotOf(kode),"Kode objek "+kode]});
+  const over2 = n > 2e6;
+
+  if(!isHonor){
+    let skip=null;
+    if(!pkp) skip="Rekanan bukan PKP: bendahara tidak boleh memungut PPN. Bila terlanjur dipungut, setor dengan KAP-KJS 411211-108 (tanggung renteng).";
+    else if(it.kind==="util") skip="BBM Pertamina, listrik dan air: PPN (bila terutang) dipungut penyedia, bukan bendahara.";
+    else if(kkp) skip="Dibayar dengan Kartu Kredit Pemerintah: PPN dipungut PKP rekanan.";
+    else if(mp) skip="Sudah dipungut oleh penyelenggara marketplace pengadaan.";
+    else if(!over2) skip="Nilai paling banyak Rp2 juta: PPN dipungut sendiri oleh PKP rekanan (kode faktur 04).";
+    add({nm:"PPN dipungut",amt:n*0.12*11/12,skip,why:skip||`12% × 11/12 × ${fmt(n)} (tarif efektif 11%). Faktur rekanan kode 02.`,tags:[kapPpn,"SPT Masa PPN Pemungut"].concat(dana==="bos"?["Madrasah negeri (APBN): 411211-910"]:[])});
+  }
+  const fin = (base,ganti) => pph("PPh final UMKM 0,5%","28-423-01",base*0.005,`0,5% × ${fmt(base)}. Menggantikan ${ganti} karena rekanan menyerahkan Surat Keterangan PP 55.`);
+
+  if(it.kind==="p22"){
+    let skip=null;
+    if(dana==="bos") skip="Dana BOS dikecualikan dari PPh 22 (Pasal 219 PMK 81/2024). Bukti pungut tetap dibuat dengan nilai nol.";
+    else if(kkp) skip="Dibayar dengan Kartu Kredit Pemerintah: tidak dipungut PPh 22.";
+    else if(mp) skip="Sudah dipungut pihak lain melalui sistem pengadaan.";
+    else if(!over2) skip="Nilai paling banyak Rp2 juta dan tidak dipecah: tidak dipungut PPh 22.";
+    if(!skip && umkm) fin(n,"PPh 22"); else pph("PPh Pasal 22","22-910-01",n*0.015,`1,5% × ${fmt(n)} (harga tidak termasuk PPN).`,skip);
+  }
+  if(it.kind==="util") pph("PPh Pasal 22","22-910-01",0,"","Pembelian BBM, BBG, pelumas, benda pos, serta pemakaian air dan listrik dikecualikan dari PPh 22.");
+  if(it.kind==="jasa"){
+    if(umkm) fin(n,op?"PPh 21":"PPh 23");
+    else if(op){
+      const base=n*0.5;
+      pph("PPh Pasal 21 bukan pegawai",it.ok,pasal17(base),`Penerima orang pribadi, jadi tidak dipotong PPh 23 (PMK 141/2015). Tarif Pasal 17 × 50% × ${fmt(n)} = Pasal 17 × ${fmt(base)}, dihitung per pembayaran.`);
+    } else {
+      const mat=Math.min(parse($("cMat").value), n), base=n-mat;
+      pph("PPh Pasal 23",it.bk,base*0.02,`2% × ${fmt(base)}${mat?` (tagihan ${fmt(n)} dikurangi material ${fmt(mat)})`:""}${j==="j39"?". Untuk katering, dasarnya seluruh tagihan.":""}. PPh 23 tidak mengenal batas Rp2 juta.`);
+    }
+  }
+  if(it.kind==="sewaharta"){
+    if(umkm) fin(n,"PPh 23");
+    else pph("PPh Pasal 23 sewa harta","24-100-02",n*0.02,`2% × ${fmt(n)}. Sewa harta tetap PPh 23 meskipun pemiliknya orang pribadi, karena bukan imbalan jasa/pekerjaan.`);
+  }
+  if(it.kind==="sewatb") pph("PPh 4(2) sewa tanah/bangunan","28-403-02",n*0.10,`10% × ${fmt(n)}, final, untuk badan maupun orang pribadi.`);
+  if(it.kind==="kons") pph("PPh 4(2) jasa konstruksi",it.kode,n*it.rate,`${pct(it.rate)} × ${fmt(n)}, final. Berlaku untuk badan maupun orang pribadi; tarif mengikuti sertifikat penyedia.`);
+  if(it.kind==="p21"){
+    const base=n*it.deem/100;
+    pph("PPh Pasal 21",it.kode,pasal17(base),`Tarif Pasal 17 × ${it.deem}% × ${fmt(n)}${it.deem===50?"":" (tanpa pengurang)"}, dihitung per pembayaran.`);
+  }
+  if(it.kind==="harian"){
+    const h=Math.max(1,Math.min(31,parse($("cHari").value)||1)), per=n/h;
+    $("cPerHari").textContent=fmt(per);
+    if(per>2500000) pph("PPh Pasal 21 upah harian","21-100-30",pasal17(n*0.5),`Upah rata-rata ${fmt(per)} sehari, di atas Rp2,5 juta: tarif Pasal 17 × 50% × ${fmt(n)}.`);
+    else { const r=per<=450000?0:0.005; pph("PPh Pasal 21 upah harian","21-100-24",n*r,`Upah rata-rata ${fmt(per)} sehari: TER harian ${pct(r)} × ${fmt(n)}.`, r===0?`Upah rata-rata ${fmt(per)} sehari, paling banyak Rp450.000: TER harian 0%. Bukti potong tetap dibuat.`:null); }
+  }
+  if(it.kind==="ter"){
+    const c=catOf($("cPtkp").value), r=TER[c].find(([lim])=>n<=lim)[1]/100;
+    pph("PPh Pasal 21 pegawai tidak tetap","21-100-35",Math.floor(n*r),`TER bulanan kategori ${c}: ${pct(r)} × ${fmt(n)}.`, r===0?`TER bulanan kategori ${c} untuk ${fmt(n)} adalah 0%. Bukti potong tetap dibuat.`:null);
+  }
+  if(it.kind==="pns") pph("PPh 21 final honor",it.kode,n*it.rate,`${pct(it.rate)} × ${fmt(n)}, final, untuk honorarium yang dibebankan pada APBN/APBD.`, it.rate===0?"Golongan I–II / Tamtama-Bintara dikenai tarif 0%. Bukti potong tetap dibuat.":null);
+
+  $("rLines").innerHTML = lines.map(l=>`<div class="line${l.skip?' skip':''}"><span class="nm">${l.nm}</span><span class="amt">${fmt(l.amt)}</span><span class="why">${l.why}</span><span class="meta">${l.tags.map((t,i)=>`<span class="tag${i===0&&t!=='—'?' kap':''}">${i===0&&t!=='—'?'KAP '+t:t}</span>`).join("")}</span></div>`).join("");
+  $("rTot").textContent = fmt(tot);
+  $("rStamp").textContent = tot>0 ? "Potong & pungut" : "Tidak dipotong";
+  const ppnShow = (pkp && !isHonor) ? n*0.12*11/12 : 0, tagihan=n+ppnShow;
+  $("rFoot").innerHTML = `
+    <div class="kv"><span>${isHonor?"Penghasilan bruto":"Tagihan rekanan"}${ppnShow?' (termasuk PPN)':''}</span><b>${fmt(tagihan)}</b></div>
+    <div class="kv"><span>Dipotong/dipungut bendahara</span><b>− ${fmt(tot)}</b></div>
+    <div class="kv" style="font-weight:700"><span>Dibayarkan ke ${isHonor?"penerima":"rekanan"}</span><b>${fmt(tagihan-tot)}</b></div>
+    <div class="hint">Setor PPh paling lambat tgl 15, lapor tgl 20 bulan berikutnya.${isHonor?"":" PPN setor dan lapor paling lambat akhir bulan berikutnya."}</div>`;
+}
+["cDana","cJenis","cPkp","cUmkm","cKkp","cMp","cBadan","cOp","cPtkp"].forEach(id=>$(id).addEventListener("change",cek));
+$("cHari").addEventListener("input",cek);
+moneyInput($("cNilai"),cek); moneyInput($("cMat"),cek);
+
+/* ---------- MATERI ---------- */
+const M = [
+ {k:"pph21", t:"PPh 21", body:`
+  <div class="prose">
+   <p>Dipotong atas penghasilan orang pribadi: gaji pegawai, upah harian, honor narasumber, dan imbalan lain sehubungan dengan pekerjaan.</p>
+   <ul>
+    <li><b>Pegawai tetap</b> (PNS, PPPK, pegawai kontrak bulanan, perangkat desa): Januari–November bruto × TER bulanan. Desember dihitung ulang setahun memakai tarif Pasal 17.</li>
+    <li><b>Pegawai tidak tetap</b>: TER harian. Upah ≤ Rp450.000 sehari 0%.</li>
+    <li><b>Bukan pegawai</b> (narasumber, tenaga ahli, juri): tarif Pasal 17 × 50% bruto, dihitung per pembayaran (tidak lagi kumulatif).</li>
+    <li><b>Peserta kegiatan</b> (uang saku peserta pelatihan, lomba, rapat): tarif Pasal 17 × 100% bruto.</li>
+    <li><b>Honor PNS dari APBN/APBD</b>: final 0% (gol. I–II), 5% (gol. III), 15% (gol. IV).</li>
+   </ul>
+   <p class="note">Bukti potong dibuat di Coretax: BPMP untuk pegawai tetap bulanan, BP21 untuk bukan pegawai dan tidak tetap, BPA2 untuk PNS di akhir tahun.</p>
+  </div>
+  <div class="tbl-wrap"><table><thead><tr><th>Kategori TER</th><th>Status PTKP</th><th class="r">Bebas sampai</th></tr></thead><tbody>
+   <tr><td>A</td><td>TK/0, TK/1, K/0</td><td class="r">Rp5.400.000</td></tr>
+   <tr><td>B</td><td>TK/2, TK/3, K/1, K/2</td><td class="r">Rp6.200.000</td></tr>
+   <tr><td>C</td><td>K/3</td><td class="r">Rp6.600.000</td></tr></tbody></table></div>`},
+ {k:"pph22", t:"PPh 22", body:`
+  <div class="prose">
+   <p>Dipungut <b>1,5% dari harga beli tidak termasuk PPN</b> atas pembelian barang, baik dengan mekanisme UP maupun LS.</p>
+   <p>Tidak dipungut bila:</p>
+   <ul>
+    <li>nilai pembayaran paling banyak Rp2 juta dan bukan pecahan dari transaksi yang lebih besar;</li>
+    <li>dibayar dengan Kartu Kredit Pemerintah;</li>
+    <li>pembelian BBM, BBG, pelumas, benda pos, serta pemakaian air dan listrik;</li>
+    <li>pembelian barang dengan dana BOS;</li>
+    <li>pembelian gabah atau beras;</li>
+    <li>rekanan menyerahkan surat keterangan bebas (SKB) atau Surat Keterangan PP 55;</li>
+    <li>pembelian melalui sistem pengadaan yang sudah dipungut pihak lain.</li>
+   </ul>
+   <p class="note">Sejak Coretax, <b>instansi</b> yang menyetor PPh 22 dengan NPWP instansi dan membuat BPPU. Rekanan tidak lagi membuatkan SSP atas namanya.</p>
+  </div>
+  <div class="tbl-wrap"><table><thead><tr><th>Contoh</th><th class="r">Nilai</th><th class="r">PPh 22</th></tr></thead><tbody>
+   <tr><td>Laptop untuk satker</td><td class="r">Rp12.000.000</td><td class="r">Rp180.000</td></tr>
+   <tr><td>ATK sekali beli</td><td class="r">Rp1.850.000</td><td class="r">Rp0</td></tr>
+   <tr><td>Bensin operasional</td><td class="r">Rp3.000.000</td><td class="r">Rp0</td></tr>
+   <tr><td>Buku perpustakaan (dana BOS)</td><td class="r">Rp8.000.000</td><td class="r">Rp0</td></tr></tbody></table></div>`},
+ {k:"pph23", t:"PPh 23", body:`
+  <div class="prose">
+   <p>Dipotong atas pembayaran <b>jasa</b> dan <b>sewa harta selain tanah/bangunan</b>. Jenis jasanya dirinci dalam PMK 141/2015.</p>
+   <p class="note"><b>Badan atau orang pribadi?</b> Jasa yang dilakukan <b>orang pribadi</b> sudah menjadi objek PPh 21 (bukan pegawai, 50% × tarif Pasal 17), sehingga tidak dipotong PPh 23 (PMK 141/2015 Pasal 1 ayat 1). PPh 23 atas jasa dipotong bila penyedianya <b>badan</b>. Sewa harta tetap PPh 23 meskipun pemiliknya orang pribadi.</p>
+   <ul>
+    <li>Tarif 2% dari jumlah bruto, tanpa PPN.</li>
+    <li>Tarif 15% untuk dividen, bunga, royalti, dan hadiah (jarang di belanja pemerintah).</li>
+    <li><b>Tidak ada batas Rp2 juta.</b> Jasa servis AC Rp500.000 tetap dipotong.</li>
+    <li>Contoh jasa: katering, kebersihan, keamanan, perawatan kendaraan, desain, cetak dengan bahan dari pemesan, event organizer.</li>
+    <li>Dasar pemotongan: seluruh tagihan tanpa PPN. Material yang dirinci dan ada bukti pembeliannya dikeluarkan dari dasar, kecuali katering yang dasarnya seluruh tagihan.</li>
+   </ul>
+   <p class="note">Bila rekanan menyerahkan Surat Keterangan PP 55, yang dipotong adalah PPh final 0,5%, bukan PPh 23.</p>
+  </div>
+  <div class="tbl-wrap"><table><thead><tr><th>Objek</th><th class="r">Tarif</th></tr></thead><tbody>
+   <tr><td>Jasa teknik, manajemen, konsultan non-konstruksi</td><td class="r">2%</td></tr>
+   <tr><td>Sewa kendaraan, alat berat, tenda, sound system</td><td class="r">2%</td></tr>
+   <tr><td>Katering, kebersihan, keamanan</td><td class="r">2%</td></tr>
+   <tr><td>Royalti, hadiah, bunga</td><td class="r">15%</td></tr></tbody></table></div>`},
+ {k:"ppn", t:"PPN", body:`
+  <div class="prose">
+   <p>Instansi pemerintah ditunjuk sebagai <b>pemungut PPN</b> atas penyerahan barang/jasa oleh PKP rekanan. Sejak 2025 tarif PPN 12%, tetapi untuk barang/jasa nonmewah dihitung dengan DPP nilai lain 11/12, sehingga efektif tetap 11%.</p>
+   <ul>
+    <li>Rumus: 12% × 11/12 × harga jual. Untuk Rp10.000.000, PPN Rp1.100.000.</li>
+    <li>Rekanan membuat faktur pajak kode 02 (dipungut instansi pemerintah).</li>
+    <li>Rekanan bukan PKP tidak memungut PPN, jadi bendahara pun tidak.</li>
+   </ul>
+   <p class="note"><b>Rekanan non-PKP: jangan pungut PPN.</b> PPN yang terlanjur dipungut dan belum disetor, disetor dengan KAP-KJS <span class="mono">411211-108</span> (PPN tanggung jawab renteng); setorannya dianggap sebagai pelaporan. Yang sudah masuk deposit 411618-100 dipindahbukukan ke 411211-108 di Coretax. Yang sudah dipotong KPPN lewat SPM-LS dengan 411211-910 tidak perlu dikoreksi (SE-1/PB/2025; S-387/KPN.0801/2025).</p>
+   <p>PPN tidak dipungut bendahara (tetapi dipungut sendiri oleh rekanan) bila nilai paling banyak Rp2 juta, dibayar dengan Kartu Kredit Pemerintah, pengadaan tanah, BBM/BBG dari Pertamina, jasa telekomunikasi, jasa angkutan udara, atau transaksi melalui pihak lain yang sudah memungut.</p>
+  </div>
+  <div class="tbl-wrap"><table><thead><tr><th>Harga (DPP)</th><th class="r">DPP nilai lain</th><th class="r">PPN 12%</th></tr></thead><tbody>
+   <tr><td>Rp5.000.000</td><td class="r">Rp4.583.333</td><td class="r">Rp550.000</td></tr>
+   <tr><td>Rp10.000.000</td><td class="r">Rp9.166.667</td><td class="r">Rp1.100.000</td></tr>
+   <tr><td>Rp50.000.000</td><td class="r">Rp45.833.333</td><td class="r">Rp5.500.000</td></tr></tbody></table></div>`},
+ {k:"kap", t:"Kode setoran", body:`
+  <div class="prose">
+   <p>Di Coretax, kode billing yang dibuat dari SPT atau bukti potong sudah memuat KAP-KJS. Tabel ini dipakai untuk memeriksa potongan di SPM/SP2D dan untuk setoran manual.</p>
+   <p>Untuk PPh 22 dan PPN, KJS membedakan sumber dana: <b>910</b> bendahara APBN, <b>920</b> bendahara APBD, <b>930</b> bendahara Dana Desa. KJS 900 untuk pemungut non-bendaharawan, bukan untuk bendahara.</p>
+   <p class="note">Sekolah negeri milik pemda (dana BOS lewat APBD) memakai 920. Madrasah negeri di bawah Kemenag (APBN) memakai 910.</p>
+  </div>
+  <div class="tbl-wrap"><table><thead><tr><th>KAP-KJS</th><th>Keterangan</th></tr></thead><tbody>
+   <tr><td class="mono">411121-100</td><td>PPh 21 masa (pegawai, bukan pegawai, peserta)</td></tr>
+   <tr><td class="mono">411121-402</td><td>PPh 21 final honorarium PNS, TNI/Polri, pejabat negara</td></tr>
+   <tr><td class="mono">411122-910 / 920 / 930</td><td>PPh 22 bendahara APBN / APBD / Dana Desa</td></tr>
+   <tr><td class="mono">411124-100</td><td>PPh 23 masa (termasuk sewa harta)</td></tr>
+   <tr><td class="mono">411124-104</td><td>PPh 23 atas jasa</td></tr>
+   <tr><td class="mono">411128-403</td><td>PPh 4(2) sewa tanah/bangunan</td></tr>
+   <tr><td class="mono">411128-409</td><td>PPh 4(2) jasa konstruksi</td></tr>
+   <tr><td class="mono">411128-423</td><td>PPh final usaha (UMKM) yang dipotong/dipungut pemotong</td></tr>
+   <tr><td class="mono">411211-910 / 920 / 930</td><td>PPN dipungut bendahara APBN / APBD / Dana Desa</td></tr>
+   <tr><td class="mono">411211-108</td><td>PPN tanggung renteng (PPN terlanjur dipungut dari non-PKP)</td></tr>
+   <tr><td class="mono">411618-100</td><td>Deposit pajak</td></tr>
+  </tbody></table></div>`},
+ {k:"pph42", t:"PPh 4(2) final", body:`
+  <div class="prose">
+   <p>PPh yang bersifat final, dipotong dari bruto, dan tidak bisa dikreditkan oleh penerima.</p>
+   <ul>
+    <li><b>Sewa tanah dan/atau bangunan</b>: 10% (sewa aula, gedung pertemuan, ruko, lahan parkir).</li>
+    <li><b>Jasa konstruksi</b> (PP 9/2022): tarif bergantung pada sertifikat penyedia, lihat tabel.</li>
+    <li><b>PPh final UMKM 0,5%</b>: dipotong sebagai pengganti PPh 22/23 bila rekanan menyerahkan Surat Keterangan PP 55. Setelah PP 20/2026, fasilitas ini untuk orang pribadi, PT perorangan, dan koperasi; CV, firma, dan PT biasa hanya sampai jangka waktunya berakhir.</li>
+   </ul>
+  </div>
+  <div class="tbl-wrap"><table><thead><tr><th>Jasa konstruksi</th><th class="r">Tarif</th></tr></thead><tbody>
+   <tr><td>Pelaksana, kualifikasi kecil / OP bersertifikat</td><td class="r">1,75%</td></tr>
+   <tr><td>Pelaksana, kualifikasi menengah atau besar</td><td class="r">2,65%</td></tr>
+   <tr><td>Pelaksana tanpa sertifikat</td><td class="r">4%</td></tr>
+   <tr><td>Konstruksi terintegrasi bersertifikat</td><td class="r">2,65%</td></tr>
+   <tr><td>Konstruksi terintegrasi tanpa sertifikat</td><td class="r">4%</td></tr>
+   <tr><td>Konsultansi bersertifikat</td><td class="r">3,5%</td></tr>
+   <tr><td>Konsultansi tanpa sertifikat</td><td class="r">6%</td></tr></tbody></table></div>`}
+];
+const tabs=$("mTabs"), body=$("mBody");
+function showTopic(k){
+  [...tabs.children].forEach(b=>b.setAttribute("aria-selected", b.dataset.k===k));
+  const m=M.find(x=>x.k===k); body.innerHTML=`<div class="topic" role="tabpanel">${m.body}</div>`;
+  try{ localStorage.setItem("mpb-topic",k) }catch(e){}
+}
+M.forEach(m=>{ const b=document.createElement("button"); b.type="button"; b.role="tab"; b.dataset.k=m.k; b.textContent=m.t; b.onclick=()=>showTopic(m.k); tabs.appendChild(b); });
+let startTopic="pph21"; try{ startTopic=localStorage.getItem("mpb-topic")||"pph21" }catch(e){}
+showTopic(M.some(m=>m.k===startTopic)?startTopic:"pph21");
+
+/* ---------- KALENDER ---------- */
+const BL=["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];
+const shift = d => { const x=new Date(d); while(x.getDay()===0||x.getDay()===6) x.setDate(x.getDate()+1); return x; };
+const fd = d => `${d.getDate()} ${BL[d.getMonth()].slice(0,3)} ${d.getFullYear()}`;
+const today=new Date(); today.setHours(0,0,0,0);
+const rows=[]; const all=[];
+for(let i=-1;i<6;i++){
+  const masa=new Date(today.getFullYear(), today.getMonth()+i, 1);
+  const s15=shift(new Date(masa.getFullYear(), masa.getMonth()+1, 15));
+  const s20=shift(new Date(masa.getFullYear(), masa.getMonth()+1, 20));
+  const eom=shift(new Date(masa.getFullYear(), masa.getMonth()+2, 0));
+  const masaNm=`${BL[masa.getMonth()]} ${masa.getFullYear()}`;
+  all.push({d:s15,t:"Setor PPh 21, 22, 23, 4(2)",m:masaNm},{d:s20,t:"Lapor SPT Masa PPh 21 & Unifikasi",m:masaNm},{d:eom,t:"Setor & lapor PPN Pemungut",m:masaNm});
+  const cls = d => d<today ? "past" : ((d-today)/864e5<=7 ? "soon":"");
+  rows.push(`<div class="mrow"><span class="mm">Masa ${masaNm}</span>
+    <span class="dl ${cls(s15)}"><small>Setor PPh</small><b>${fd(s15)}</b></span>
+    <span class="dl ${cls(s20)}"><small>Lapor PPh</small><b>${fd(s20)}</b></span>
+    <span class="dl ${cls(eom)}"><small>PPN setor & lapor</small><b>${fd(eom)}</b></span></div>`);
+}
+const jan=shift(new Date(today.getMonth()===0&&today.getDate()<=31?today.getFullYear():today.getFullYear()+1,0,31));
+$("calList").innerHTML = rows.join("") + `<div class="mrow"><span class="mm">Tahunan</span><span class="dl" style="grid-column:span 3"><small>Berikan bukti potong A1/A2 setahun ke pegawai, paling lambat 1 bulan setelah tahun berakhir</small><b>${fd(jan)}</b></span></div>`;
+const nx = all.filter(x=>x.d>=today).sort((a,b)=>a.d-b.d)[0];
+const days = Math.round((nx.d-today)/864e5);
+$("calNext").innerHTML = `<p class="eyebrow">Tenggat terdekat</p><p class="d mono">${days===0?"Hari ini":days+" hari"}</p><p><b>${nx.t}</b></p><p style="opacity:.8">Masa pajak ${nx.m} · ${fd(nx.d)}</p>`;
+
+/* ---------- PPh 21 TER ---------- */
+const TER = {
+A:[[5.4e6,0],[5.65e6,.25],[5.95e6,.5],[6.3e6,.75],[6.75e6,1],[7.5e6,1.25],[8.55e6,1.5],[9.65e6,1.75],[10.05e6,2],[10.35e6,2.25],[10.7e6,2.5],[11.05e6,3],[11.6e6,3.5],[12.5e6,4],[13.75e6,5],[15.1e6,6],[16.95e6,7],[19.75e6,8],[24.15e6,9],[26.45e6,10],[28e6,11],[30.05e6,12],[32.4e6,13],[35.4e6,14],[39.1e6,15],[43.85e6,16],[47.8e6,17],[51.4e6,18],[56.3e6,19],[62.2e6,20],[68.6e6,21],[77.5e6,22],[89e6,23],[103e6,24],[125e6,25],[157e6,26],[206e6,27],[337e6,28],[454e6,29],[550e6,30],[695e6,31],[910e6,32],[1.4e9,33],[Infinity,34]],
+B:[[6.2e6,0],[6.5e6,.25],[6.85e6,.5],[7.3e6,.75],[9.2e6,1],[10.75e6,1.5],[11.25e6,2],[11.6e6,2.5],[12.6e6,3],[13.6e6,4],[14.95e6,5],[16.4e6,6],[18.45e6,7],[21.85e6,8],[26e6,9],[27.7e6,10],[29.35e6,11],[31.45e6,12],[33.95e6,13],[37.1e6,14],[41.1e6,15],[45.8e6,16],[49.5e6,17],[53.8e6,18],[58.5e6,19],[64e6,20],[71e6,21],[80e6,22],[93e6,23],[109e6,24],[129e6,25],[163e6,26],[211e6,27],[374e6,28],[459e6,29],[555e6,30],[704e6,31],[957e6,32],[1.405e9,33],[Infinity,34]],
+C:[[6.6e6,0],[6.95e6,.25],[7.35e6,.5],[7.8e6,.75],[8.85e6,1],[9.8e6,1.25],[10.95e6,1.5],[11.2e6,1.75],[12.05e6,2],[12.95e6,3],[14.15e6,4],[15.55e6,5],[17.05e6,6],[19.5e6,7],[22.7e6,8],[26.6e6,9],[28.1e6,10],[30.1e6,11],[32.6e6,12],[35.4e6,13],[38.9e6,14],[43e6,15],[47.4e6,16],[51.2e6,17],[55.8e6,18],[60.4e6,19],[66.7e6,20],[74.5e6,21],[83.2e6,22],[95.6e6,23],[110e6,24],[134e6,25],[169e6,26],[221e6,27],[390e6,28],[463e6,29],[561e6,30],[709e6,31],[965e6,32],[1.419e9,33],[Infinity,34]]};
+const catOf = s => ({"TK/0":"A","TK/1":"A","K/0":"A","TK/2":"B","TK/3":"B","K/1":"B","K/2":"B","K/3":"C"})[s];
+function ter(){
+  const st=$("tPtkp").value, b=parse($("tBruto").value), c=catOf(st);
+  const r=TER[c].find(([lim])=>b<=lim)[1]/100;
+  const pph=Math.floor(b*r);
+  $("tOut").innerHTML = `<div class="kv"><span>Kategori TER</span><b>${c}</b></div>
+   <div class="kv"><span>Tarif efektif bulanan</span><b>${pct(r)}</b></div>
+   <div class="kv"><span>PPh 21 sebulan</span><span class="big mono">${fmt(pph)}</span></div>
+   <div class="hint">Kode akun 411121-100 · bukti potong BPMP. Masa Desember dihitung ulang dengan tarif Pasal 17 setahun.</div>`;
+}
+["tPtkp"].forEach(id=>$(id).addEventListener("change",ter)); moneyInput($("tBruto"),ter); ter();
+function har(){
+  const u=parse($("hUpah").value), h=Math.max(1,Math.min(31,parse($("hHari").value)||1));
+  let per, ket;
+  if(u<=450000){per=0;ket="0% (sampai Rp450.000 sehari)";}
+  else if(u<=2500000){per=u*0.005;ket="0,5% TER harian";}
+  else {per=pasal17(u*0.5);ket="Pasal 17 × 50% bruto";}
+  $("hOut").innerHTML = `<div class="kv"><span>Dasar</span><b>${ket}</b></div>
+   <div class="kv"><span>PPh per hari</span><b>${fmt(per)}</b></div>
+   <div class="kv"><span>Upah ${h} hari</span><b>${fmt(u*h)}</b></div>
+   <div class="kv"><span>PPh 21 dipotong</span><span class="big mono">${fmt(per*h)}</span></div>
+   <div class="hint">Bukti potong BP21. Upah yang dibayar bulanan memakai TER bulanan, bukan harian.</div>`;
+}
+moneyInput($("hUpah"),har); $("hHari").addEventListener("input",har); har();
+
+/* ---------- KUIS ---------- */
+const Q=[
+ {q:"Bendahara satker membeli kertas Rp1.900.000 dan tinta Rp1.800.000 dari toko yang sama, hari yang sama, dalam satu pesanan, lalu dibuat dua kuitansi. Bagaimana PPh 22-nya?",o:["Tidak dipungut, masing-masing di bawah Rp2 juta","Dipungut 1,5% × Rp3.700.000","Dipungut hanya atas kuitansi yang lebih besar"],a:1,e:"Batas Rp2 juta berlaku untuk nilai transaksi sebenarnya. Pembayaran yang dipecah dari satu transaksi Rp3,7 juta tetap dipungut: 1,5% × Rp3.700.000 = Rp55.500."},
+ {q:"Sekolah negeri membeli buku perpustakaan Rp8 juta dari dana BOS kepada penerbit PKP (bukan lewat SIPLah). Pajak apa yang ditangani bendahara?",o:["PPh 22 dan PPN","Hanya PPN","Tidak ada"],a:1,e:"Pembelian barang dengan dana BOS dikecualikan dari PPh 22 (Pasal 219 PMK 81/2024), tetapi PPN tetap dipungut bila rekanan PKP dan nilainya di atas Rp2 juta. (Catatan: buku pelajaran umum tertentu dapat dibebaskan PPN; periksa faktur.)"},
+ {q:"OPD membayar jasa servis AC Rp800.000 kepada CV yang bukan PKP. Apa yang dipotong?",o:["Tidak ada, karena di bawah Rp2 juta","PPh 23 sebesar Rp16.000","PPh 22 sebesar Rp12.000"],a:1,e:"PPh 23 tidak memiliki batas minimal. Jasa tetap dipotong 2% × Rp800.000 = Rp16.000. Batas Rp2 juta hanya berlaku untuk PPh 22 dan PPN."},
+ {q:"Berapa PPN yang dipungut atas pembelian komputer senilai Rp20.000.000 dari PKP?",o:["Rp2.400.000","Rp2.200.000","Rp2.000.000"],a:1,e:"12% × 11/12 × Rp20.000.000 = Rp2.200.000. Tarif efektif untuk barang nonmewah tetap 11% (PMK 131/2024)."},
+ {q:"Desa menyewa balai pertemuan milik warga Rp3.000.000 untuk musyawarah. Pajaknya?",o:["PPh 23 2%","PPh 4(2) final 10%","Tidak dipotong karena pemilik orang pribadi"],a:1,e:"Sewa tanah dan/atau bangunan dikenai PPh 4(2) final 10% = Rp300.000, siapa pun pemiliknya."},
+ {q:"Kapan batas akhir setor PPh 21 yang dipotong atas gaji masa Maret?",o:["10 April","15 April","Akhir April"],a:1,e:"PMK 81/2024 menyeragamkan setoran PPh paling lambat tanggal 15 bulan berikutnya, dan lapor SPT Masa paling lambat tanggal 20."},
+ {q:"Narasumber dari universitas (bukan PNS instansi Anda) menerima honor Rp4.000.000. PPh 21-nya?",o:["Rp100.000","Rp200.000","Rp600.000"],a:0,e:"Bukan pegawai: tarif Pasal 17 × 50% bruto = 5% × Rp2.000.000 = Rp100.000, dihitung per pembayaran tanpa akumulasi (PMK 168/2023). Bila narasumber adalah PNS dan honor dari APBN/APBD, berlaku PPh 21 final sesuai golongan."},
+ {q:"Bendahara terlanjur memungut PPN Rp330.000 dari rekanan non-PKP pada pembayaran GUP dan uangnya masih di bendahara. Apa yang dilakukan?",o:["Kembalikan ke rekanan","Setor dengan KAP-KJS 411211-108","Setor dengan KAP-KJS 411211-910 seperti PPN biasa"],a:1,e:"Rekanan non-PKP tidak boleh dipungut PPN. Yang terlanjur dipungut dan belum disetor disetor dengan 411211-108 (PPN tanggung jawab renteng); setoran ini dianggap sebagai pelaporan (SE-1/PB/2025, S-387/KPN.0801/2025)."},
+ {q:"Rekanan perorangan penyedia katering menyerahkan Surat Keterangan PP 55. Pembayaran Rp6.000.000. Apa yang dipotong?",o:["PPh 23 2% = Rp120.000","PPh final 0,5% = Rp30.000","Tidak dipotong apa pun"],a:1,e:"Rekanan dengan Surat Keterangan PP 55 dikenai PPh final 0,5% sebagai pengganti PPh 23. Bendahara memotong Rp30.000 dan membuat BPPU."}
+];
+let qi=0, score=0;
+function renderQ(){
+  const c=$("qCard");
+  if(qi>=Q.length){
+    c.innerHTML=`<p class="eyebrow">Selesai</p><h3>Skor Anda: ${score} dari ${Q.length}</h3><p class="muted">${score>=8?"Sangat baik. Anda siap menangani transaksi harian.":score>=6?"Cukup baik. Ulangi materi PPh 22, PPh 23, dan PPN.":"Pelajari lagi bagian Materi dan coba alat Cek Transaksi."}</p><button type="button" class="btn" id="qRe">Ulangi kuis</button>`;
+    $("qRe").onclick=()=>{qi=0;score=0;renderQ();}; return;
+  }
+  const it=Q[qi];
+  c.innerHTML=`<div class="qprog"><span>Kasus ${qi+1} dari ${Q.length}</span><span>Skor ${score}</span></div>
+   <div class="qbar"><i style="width:${qi/Q.length*100}%"></i></div>
+   <p style="font-weight:600">${it.q}</p>
+   <div class="opts">${it.o.map((o,i)=>`<button type="button" data-i="${i}">${o}</button>`).join("")}</div>
+   <div id="qExp"></div>`;
+  c.querySelectorAll(".opts button").forEach(b=>b.onclick=()=>{
+    const i=+b.dataset.i; const ok=i===it.a; if(ok) score++;
+    c.querySelectorAll(".opts button").forEach(x=>{x.disabled=true; if(+x.dataset.i===it.a) x.classList.add("right");});
+    if(!ok) b.classList.add("wrong");
+    $("qExp").innerHTML=`<p class="note ${ok?'ok':''}"><b>${ok?"Benar.":"Belum tepat."}</b> ${it.e}</p><button type="button" class="btn" id="qNext" style="margin-top:12px">${qi+1<Q.length?"Kasus berikutnya":"Lihat skor"}</button>`;
+    $("qNext").onclick=()=>{qi++;renderQ();}; $("qNext").focus();
+  });
+}
+renderQ();
+
+/* ---------- FAQ & GLOSARIUM ---------- */
+const F=[
+ ["Rekanan tidak punya NPWP, bagaimana?","Sejak Coretax, NIK berfungsi sebagai NPWP orang pribadi. Minta NIK dan pastikan sudah terdaftar. Bila penerima benar-benar tidak memiliki NPWP/NIK yang valid, tarif lebih tinggi berlaku: PPh 22 dan PPh 23 100% lebih tinggi, PPh 21 20% lebih tinggi."],
+ ["Apakah transaksi yang tidak dipungut tetap dibuatkan bukti potong?","Ya untuk transaksi yang menggunakan fasilitas, misalnya ada SKB atau pengecualian PPh 22 dana BOS: bukti pungut dibuat dengan nilai nol dan mencantumkan dasar fasilitasnya. Honor PNS golongan I–II juga tetap dibuatkan bukti potong dengan tarif 0%."],
+ ["Kenapa PPN tidak dipungut untuk belanja di bawah Rp2 juta, padahal di faktur ada PPN?","PPN tetap terutang, tetapi yang memungut, menyetor, dan melaporkannya adalah PKP rekanan sendiri (faktur kode 04). Bendahara membayar tagihan termasuk PPN tanpa memotongnya."],
+ ["Saya terlambat setor atau lapor. Apa sanksinya?","Keterlambatan setor dikenai bunga per bulan sesuai tarif bunga yang ditetapkan Menteri Keuangan. Keterlambatan lapor SPT Masa dikenai denda Rp100.000 untuk SPT Masa PPh dan Rp500.000 untuk SPT Masa PPN. Sanksi ditagih lewat STP atas nama instansi."],
+ ["Apakah kuitansi perlu meterai?","Dokumen yang menyatakan penerimaan uang dengan nilai di atas Rp5 juta terutang Bea Meterai Rp10.000. Yang terutang adalah pihak yang menerima manfaat dokumen, biasanya diatur dalam kontrak."],
+ ["Belanja lewat SIPLah atau e-Katalog, apakah bendahara memungut lagi?","Bila penyelenggara sistem pengadaan sudah memungut PPh 22 dan PPN, bendahara tidak memungut lagi. Periksa rincian pajak di dokumen transaksi sebelum membayar. Jasa tetap perlu dicek apakah PPh 23-nya sudah dipotong."],
+ ["Terlanjur memungut PPN dari rekanan non-PKP, bagaimana?","Bila belum disetor, setor dengan KAP-KJS 411211-108 (PPN tanggung jawab renteng); setoran itu dianggap sebagai pelaporan. Bila sudah disetor ke deposit 411618-100, pindahbukukan ke 411211-108 di Coretax. Bila sudah dipotong KPPN lewat SPM-LS dengan 411211-910, tidak perlu dikoreksi karena otomatis tercatat di buku besar instansi. Ke depan, jangan pungut PPN dari rekanan non-PKP."],
+ ["Bendahara pengganti sementara, siapa yang lapor?","Kewajiban melekat pada instansi (NPWP instansi). Siapa pun yang diberi peran di Coretax oleh PIC dapat membuat bukti potong dan melapor. Pastikan peran dicabut saat serah terima jabatan."]
+];
+$("faqList").innerHTML=F.map(([q,a])=>`<details><summary>${q}</summary><p>${a}</p></details>`).join("");
+const G=[
+ ["BPPU","Bukti Pemotongan/Pemungutan Unifikasi. Untuk PPh 22, 23, 4(2), dan PPh final UMKM."],
+ ["BPMP","Bukti potong PPh 21 bulanan untuk pegawai tetap."],
+ ["BP21","Bukti potong PPh 21 untuk bukan pegawai dan pegawai tidak tetap."],
+ ["BPA2","Bukti potong PPh 21 setahun untuk PNS, TNI, Polri, dan pejabat negara."],
+ ["TER","Tarif Efektif Rata-rata. Tarif PPh 21 bulanan berdasarkan kategori PTKP (A, B, C)."],
+ ["PTKP","Penghasilan Tidak Kena Pajak. TK/0 Rp54 juta setahun, tambah Rp4,5 juta untuk kawin dan tiap tanggungan (maks. 3)."],
+ ["DPP nilai lain","Dasar pengenaan PPN sebesar 11/12 harga jual, sehingga PPN 12% efektif menjadi 11%."],
+ ["KAP-KJS","Kode Akun Pajak dan Kode Jenis Setoran. Contoh 411122-910 untuk PPh 22 bendahara APBN."],
+ ["Kode billing","Kode pembayaran pajak yang dibuat dari Coretax atau SPM, berlaku terbatas."],
+ ["NTPN","Nomor Transaksi Penerimaan Negara. Bukti sah bahwa pajak sudah masuk kas negara."],
+ ["Deposit pajak","Saldo setoran di Coretax (411618-100) yang dipakai saat SPT Masa dilaporkan."],
+ ["PIC","Person in Charge. Penanggung jawab akun Coretax instansi yang membagi peran."],
+ ["Subunit","Unit di bawah NPWP induk, mis. sekolah di bawah dinas pendidikan."],
+ ["PKP","Pengusaha Kena Pajak. Rekanan yang wajib memungut PPN dan membuat faktur."],
+ ["SKB","Surat Keterangan Bebas pemotongan/pemungutan PPh dari DJP."],
+ ["KKP","Kartu Kredit Pemerintah. Belanja dengan KKP tidak dipungut PPh 22 dan PPN oleh bendahara."],
+ ["UP / GU / LS","Uang Persediaan, Ganti Uang, Langsung. Mekanisme pembayaran belanja yang menentukan siapa menyetor pajak."]
+];
+function gloss(){ const q=$("gq").value.trim().toLowerCase();
+  const r=G.filter(([t,d])=>!q||t.toLowerCase().includes(q)||d.toLowerCase().includes(q));
+  $("gList").innerHTML = r.length ? r.map(([t,d])=>`<dt>${t}</dt><dd>${d}</dd>`).join("") : `<dd class="muted">Istilah tidak ditemukan. Coba kata lain.</dd>`; }
+$("gq").addEventListener("input",gloss); gloss();
+
+/* ---------- TANYA ---------- */
+$("aCopyMail").addEventListener("click",()=>{
+  const m=$("aEmail");
+  const sel=()=>{const r=document.createRange();r.selectNodeContents(m);const w=getSelection();w.removeAllRanges();w.addRange(r);};
+  try{ navigator.clipboard.writeText("hi.widodomaruf@gmail.com").then(()=>{$("aCopyMail").textContent="Tersalin";},sel); }catch(e){ sel(); }
+});
+cek();
+})();
+</script>
+
+</body></html>
